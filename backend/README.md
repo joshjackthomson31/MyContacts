@@ -132,6 +132,8 @@ Create a `.env` file in the root directory with the following variables:
 | POST | `/api/users/register` | Public | Register a new user |
 | POST | `/api/users/login` | Public | Login and get access token |
 | GET | `/api/users/current` | Private | Get current logged-in user info |
+| PUT | `/api/users/email` | Private | Update user email (requires password) |
+| PUT | `/api/users/password` | Private | Change user password |
 
 ### Contact Routes (`/api/contacts`)
 

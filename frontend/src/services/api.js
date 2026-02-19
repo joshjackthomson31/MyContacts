@@ -58,6 +58,18 @@ export const authAPI = {
   getCurrentUser: async () => {
     const response = await api.get('/users/current')
     return response.data
+  },
+
+  // Update email (requires current password for verification)
+  updateEmail: async (email, password) => {
+    const response = await api.put('/users/email', { email, password })
+    return response.data
+  },
+
+  // Change password
+  changePassword: async (currentPassword, newPassword) => {
+    const response = await api.put('/users/password', { currentPassword, newPassword })
+    return response.data
   }
 }
 

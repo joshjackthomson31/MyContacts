@@ -178,6 +178,10 @@ Users can view their profile information including username, email, and user ID.
 
 The profile page displays a visual avatar with the user's initial.
 
+Users can update their email address by clicking the Update Email button and providing their current password for verification.
+
+Users can change their password by clicking the Change Password button and entering their current password along with the new password.
+
 ---
 
 ## Pages and Components
@@ -197,6 +201,8 @@ The contacts page is the main view after login. It displays a header with the ap
 ### Profile Page
 
 The profile page shows detailed user information. It displays an avatar circle with the user's initial, the username, email address, user ID, and account status. A back button returns the user to the contacts page.
+
+The profile page includes two action buttons for managing account settings. The Update Email button reveals a form where users can enter a new email address and their current password for verification. The Change Password button reveals a form for entering the current password, new password, and password confirmation. Both forms include validation and display success or error messages.
 
 ### ContactCard Component
 
@@ -231,6 +237,10 @@ The authAPI.register function sends a POST request to /users/register with usern
 The authAPI.login function sends a POST request to /users/login with email and password. It returns the access token.
 
 The authAPI.getCurrentUser function sends a GET request to /users/current to retrieve the logged-in user's information.
+
+The authAPI.updateEmail function sends a PUT request to /users/email with the new email and current password. It returns a new access token since the email is embedded in the JWT payload.
+
+The authAPI.changePassword function sends a PUT request to /users/password with the current password and new password.
 
 ### Contacts API Functions
 

@@ -106,7 +106,11 @@ Create, read, update, and delete contacts.
 
 View detailed contact information.
 
-User profile page.
+User profile page with account management.
+
+Update email address with password verification.
+
+Change password functionality.
 
 Responsive design.
 
@@ -121,6 +125,10 @@ POST /api/users/register - Register a new user.
 POST /api/users/login - Login and get access token.
 
 GET /api/users/current - Get current user info (requires auth).
+
+PUT /api/users/email - Update email address (requires auth).
+
+PUT /api/users/password - Change password (requires auth).
 
 ### Contacts
 
