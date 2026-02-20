@@ -16,6 +16,7 @@ body {
   background-color: #f5f5f5;
   color: #333;
   line-height: 1.5;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -31,3 +32,106 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #1a1a2e;
+  color: #eaeaea;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #16213e;
+  color: #eaeaea;
+  border-color: #0f3460;
+}
+
+body.dark-mode input::placeholder {
+  color: #888;
+}
+
+/* Dark mode for headers - override inline styles */
+body.dark-mode header {
+  background-color: #0f3460 !important;
+}
+
+/* Dark mode for all div containers (cards, forms, etc.) */
+body.dark-mode div {
+  color: #eaeaea !important;
+}
+
+/* Dark mode for headings */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: #eaeaea !important;
+}
+
+/* Dark mode for paragraphs and text */
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label {
+  color: #ccc !important;
+}
+
+/* 
+ * IMPORTANT: Don't override button colors with !important
+ * Buttons already have correct inline colors set in React components
+ * Only override buttons that don't have explicit color styling
+ */
+
+/* Dark mode for form labels and titles */
+body.dark-mode form h3,
+body.dark-mode form label {
+  color: #eaeaea !important;
+}
+
+/* Dark mode for card backgrounds - using main to target content area */
+body.dark-mode main > div {
+  background-color: #16213e !important;
+  border-color: #0f3460 !important;
+}
+
+/* Keep white background for profile cards */
+body.dark-mode main > div > div {
+  background-color: #1e2a47 !important;
+}
+
+/* Select dropdown options */
+body.dark-mode select option {
+  background-color: #16213e;
+  color: #eaeaea;
+}
+
+/* Override for elements with white backgrounds - keep text dark */
+body.dark-mode form[style*="white"] h3,
+body.dark-mode form h3 {
+  color: #333 !important;
+}
+
+/* Sort dropdown with white background should have dark text */
+body.dark-mode select {
+  color: #333 !important;
+}
+
+/* Dark mode for Contact Detail Modal */
+body.dark-mode .contact-modal {
+  background-color: #1e2a47 !important;
+}
+
+body.dark-mode .contact-modal h2 {
+  color: #eaeaea !important;
+}
+
+body.dark-mode .contact-modal p {
+  color: #ccc !important;
+}
+
+/* Modal details container - the gray background area */
+body.dark-mode .contact-modal .details-container {
+  background-color: #16213e !important;
+  border-color: #0f3460 !important;
+}
+

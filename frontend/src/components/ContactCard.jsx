@@ -5,14 +5,27 @@
 // Example: <ContactCard name="Josh" email="josh@email.com" />
 // Then inside this component: props.name = "Josh", props.email = "josh@email.com"
 
-function ContactCard({ name, email, phone, onView, onEdit, onDelete }) {
+function ContactCard({ name, email, phone, isFavorite, onView, onEdit, onDelete, onToggleFavorite }) {
   // DESTRUCTURING: Instead of writing props.name, props.email, etc.
-  // we can extract them directly: { name, email, phone, onView, onEdit, onDelete }
+  // we can extract them directly: { name, email, phone, isFavorite, onView, onEdit, onDelete, onToggleFavorite }
   // This is cleaner and easier to read
   
   return (
     <div style={cardStyle}>
-      <h3>{name}</h3>
+      <div style={cardHeaderStyle}>
+        <h3 style={{ margin: 0 }}>{name}</h3>
+        {/* Favorite button - star icon */}
+        <button 
+          onClick={onToggleFavorite} 
+          style={{
+            ...favoriteButtonStyle,
+            color: isFavorite ? '#f1c40f' : '#ccc'
+          }}
+          title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          {isFavorite ? '★' : '☆'}
+        </button>
+      </div>
       <p>Email: {email}</p>
       <p>Phone: {phone}</p>
       
@@ -42,6 +55,22 @@ const cardStyle = {
   padding: '15px',
   margin: '10px 0',
   backgroundColor: '#f9f9f9'
+}
+
+const cardHeaderStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '10px'
+}
+
+const favoriteButtonStyle = {
+  background: 'none',
+  border: 'none',
+  fontSize: '24px',
+  cursor: 'pointer',
+  padding: '0',
+  lineHeight: 1
 }
 
 const buttonContainerStyle = {

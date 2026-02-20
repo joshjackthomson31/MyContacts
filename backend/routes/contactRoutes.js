@@ -1,17 +1,45 @@
 const express = require('express');
 const router = express.Router();
-const {getContacts, getContact, createContact, updateContact, deleteContact} = require('../controllers/contactController');
+const {
+    getContacts, 
+    getTrash,
+    getContact, 
+    createContact, 
+    updateContact, 
+    toggleFavorite,
+    deleteContact,
+    restoreContact,
+    permanentDelete
+} = require('../controllers/contactController');
 const validateToken = require('../middleware/validateTokenHandler');
 
-router.use(validateToken)
-router.route("/").get(getContacts);
+router.use(validateToken);
 
-router.route("/:id").get(getContact);
+// Get all contacts (with optional search & sort)
+router.get("/", getContacts);
 
-router.route("/").post(createContact);
+// Get trash (deleted contacts)
+router.get("/trash", getTrash);
 
-router.route("/:id").put(updateContact);
+// Get single contact
+router.get("/:id", getContact);
 
-router.route("/:id").delete(deleteContact);
+// Create new contact
+router.post("/", createContact);
+
+// Update contact
+router.put("/:id", updateContact);
+
+// Toggle favorite
+router.put("/:id/favorite", toggleFavorite);
+
+// Restore from trash
+router.put("/:id/restore", restoreContact);
+
+// Soft delete (move to trash)
+router.delete("/:id", deleteContact);
+
+// Permanent delete
+router.delete("/:id/permanent", permanentDelete);
 
 module.exports = router;

@@ -47,7 +47,7 @@ function ContactForm({ onAddContact }) {
 
   return (
     <form onSubmit={handleSubmit} style={formStyle}>
-      <h3>Add New Contact</h3>
+      <h3 style={{ color: '#333' }}>Add New Contact</h3>
       
       {/* CONTROLLED INPUT EXPLAINED:
           value={name} - The input always shows what's in state

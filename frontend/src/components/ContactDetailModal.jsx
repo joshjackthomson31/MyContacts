@@ -44,7 +44,7 @@ function ContactDetailModal({ contactId, onClose }) {
   return (
     <div style={overlayStyle} onClick={onClose}>
       {/* Stop propagation so clicking inside modal doesn't close it */}
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+      <div className="contact-modal" style={modalStyle} onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
         <button onClick={onClose} style={closeButtonStyle}>
           ✕
@@ -73,7 +73,7 @@ function ContactDetailModal({ contactId, onClose }) {
             <h2 style={nameStyle}>{contact.name}</h2>
 
             {/* Contact Details */}
-            <div style={detailsContainerStyle}>
+            <div className="details-container" style={detailsContainerStyle}>
               <div style={detailRowStyle}>
                 <span style={iconStyle}>📧</span>
                 <div>

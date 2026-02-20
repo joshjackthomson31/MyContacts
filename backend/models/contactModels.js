@@ -18,6 +18,18 @@ const contactSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add a phone value"]
     },
+    isFavorite: {
+        type: Boolean,
+        default: false
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    deletedAt: {
+        type: Date,
+        default: null
+    }
 }, {
     timestamps: true
 });

@@ -18,7 +18,7 @@ import ContactDetailModal from '../components/ContactDetailModal'
 // - If dependencies = [], runs ONCE when component mounts
 // - If dependencies = [someValue], runs when someValue changes
 
-function Contacts({ onLogout, onViewProfile }) {
+function Contacts({ onLogout, onViewProfile, onViewTrash }) {
   const [contacts, setContacts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -32,13 +32,28 @@ function Contacts({ onLogout, onViewProfile }) {
   // State for viewing - which contact ID is being viewed (null = none)
   const [viewingContactId, setViewingContactId] = useState(null)
 
+  // Search and sort state
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState('date') // 'date', 'date-asc', 'name', 'name-desc'
+
+  // Fetch contacts with search and sort
+  const fetchContacts = async (search = '', sort = 'date') => {
+    try {
+      const contactsData = await contactsAPI.getAll(search, sort)
+      setContacts(contactsData)
+    } catch (err) {
+      setError('Failed to load contacts')
+      console.error(err)
+    }
+  }
+
   // useEffect to load contacts and user info when page opens
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch contacts and user info in parallel
         const [contactsData, userData] = await Promise.all([
-          contactsAPI.getAll(),
+          contactsAPI.getAll('', sortBy),
           authAPI.getCurrentUser()
         ])
         setContacts(contactsData)
@@ -54,18 +69,27 @@ function Contacts({ onLogout, onViewProfile }) {
     fetchData()
   }, [])
 
+  // Handle search - debounced effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchContacts(searchTerm, sortBy)
+    }, 300) // Wait 300ms after user stops typing
+
+    return () => clearTimeout(timer)
+  }, [searchTerm, sortBy])
+
   // Add new contact
   const handleAddContact = async (contactData) => {
     try {
       const newContact = await contactsAPI.create(contactData)
-      // Add to state so it appears immediately
-      setContacts([...contacts, newContact])
+      // Refresh contacts to maintain sort order
+      fetchContacts(searchTerm, sortBy)
     } catch (err) {
       alert('Failed to add contact: ' + (err.response?.data?.message || err.message))
     }
   }
 
-  // Delete contact
+  // Delete contact (soft delete - moves to trash)
   const handleDelete = async (id) => {
     try {
       await contactsAPI.delete(id)
@@ -73,6 +97,19 @@ function Contacts({ onLogout, onViewProfile }) {
       setContacts(contacts.filter(c => c._id !== id))
     } catch (err) {
       alert('Failed to delete contact')
+    }
+  }
+
+  // Toggle favorite status
+  const handleToggleFavorite = async (id) => {
+    try {
+      const updatedContact = await contactsAPI.toggleFavorite(id)
+      // Update the contact in state
+      setContacts(contacts.map(c => 
+        c._id === id ? updatedContact : c
+      ))
+    } catch (err) {
+      alert('Failed to update favorite status')
     }
   }
 
@@ -109,6 +146,14 @@ function Contacts({ onLogout, onViewProfile }) {
     onLogout()
   }
 
+  // Sort contacts: favorites first, then by current sort
+  const sortedContacts = [...contacts].sort((a, b) => {
+    // Favorites always come first
+    if (a.isFavorite && !b.isFavorite) return -1
+    if (!a.isFavorite && b.isFavorite) return 1
+    return 0 // Keep existing sort order from API
+  })
+
   // Show loading state
   if (loading) {
     return (
@@ -127,6 +172,9 @@ function Contacts({ onLogout, onViewProfile }) {
           {user && <p style={{ margin: 0, fontSize: '14px' }}>Welcome, {user.username}!</p>}
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={onViewTrash} style={trashButtonStyle}>
+            Trash
+          </button>
           <button onClick={onViewProfile} style={profileButtonStyle}>
             Profile
           </button>
@@ -143,18 +191,41 @@ function Contacts({ onLogout, onViewProfile }) {
         {/* Add contact form */}
         <ContactForm onAddContact={handleAddContact} />
 
+        {/* Search and Sort Controls */}
+        <div style={searchSortContainerStyle}>
+          <input
+            type="text"
+            placeholder="Search by name, email, or phone..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={searchInputStyle}
+          />
+          <select 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value)}
+            style={sortSelectStyle}
+          >
+            <option value="date">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+            <option value="name">Name A-Z</option>
+            <option value="name-desc">Name Z-A</option>
+          </select>
+        </div>
+
         {/* Contacts list */}
         <h2>Your Contacts ({contacts.length})</h2>
         
-        {contacts.map(contact => (
+        {sortedContacts.map(contact => (
           <ContactCard
             key={contact._id}
             name={contact.name}
             email={contact.email}
             phone={contact.phone}
+            isFavorite={contact.isFavorite}
             onView={() => handleView(contact._id)}
             onEdit={() => handleEdit(contact)}
             onDelete={() => handleDelete(contact._id)}
+            onToggleFavorite={() => handleToggleFavorite(contact._id)}
           />
         ))}
 
@@ -214,10 +285,44 @@ const profileButtonStyle = {
   fontWeight: 'bold'
 }
 
+const trashButtonStyle = {
+  backgroundColor: 'transparent',
+  color: 'white',
+  border: '2px solid white',
+  padding: '10px 20px',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  fontWeight: 'bold'
+}
+
 const mainStyle = {
   padding: '20px',
   maxWidth: '600px',
   margin: '0 auto'
+}
+
+const searchSortContainerStyle = {
+  display: 'flex',
+  gap: '10px',
+  marginBottom: '20px'
+}
+
+const searchInputStyle = {
+  flex: 1,
+  padding: '12px',
+  border: '1px solid #ddd',
+  borderRadius: '4px',
+  fontSize: '14px'
+}
+
+const sortSelectStyle = {
+  padding: '12px',
+  border: '1px solid #ddd',
+  borderRadius: '4px',
+  fontSize: '14px',
+  backgroundColor: 'white',
+  color: '#333',
+  cursor: 'pointer'
 }
 
 const loadingStyle = {

@@ -75,9 +75,18 @@ export const authAPI = {
 
 // CONTACTS API CALLS
 export const contactsAPI = {
-  // Get all contacts for logged-in user
-  getAll: async () => {
-    const response = await api.get('/contacts')
+  // Get all contacts for logged-in user (with optional search & sort)
+  getAll: async (search = '', sort = 'date') => {
+    const params = new URLSearchParams()
+    if (search) params.append('search', search)
+    if (sort) params.append('sort', sort)
+    const response = await api.get(`/contacts?${params.toString()}`)
+    return response.data
+  },
+
+  // Get trash (deleted contacts)
+  getTrash: async () => {
+    const response = await api.get('/contacts/trash')
     return response.data
   },
 
@@ -100,9 +109,27 @@ export const contactsAPI = {
     return response.data
   },
 
-  // Delete a contact
+  // Toggle favorite status
+  toggleFavorite: async (id) => {
+    const response = await api.put(`/contacts/${id}/favorite`)
+    return response.data
+  },
+
+  // Soft delete a contact (move to trash)
   delete: async (id) => {
     const response = await api.delete(`/contacts/${id}`)
+    return response.data
+  },
+
+  // Restore contact from trash
+  restore: async (id) => {
+    const response = await api.put(`/contacts/${id}/restore`)
+    return response.data
+  },
+
+  // Permanently delete a contact
+  permanentDelete: async (id) => {
+    const response = await api.delete(`/contacts/${id}/permanent`)
     return response.data
   }
 }

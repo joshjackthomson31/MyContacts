@@ -4,7 +4,7 @@ import { authAPI } from '../services/api'
 // Profile.jsx - User profile page
 // Displays the current user's information and allows updating email/password
 
-function Profile({ onBack, onTokenUpdate }) {
+function Profile({ onBack, darkMode, toggleDarkMode }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -156,6 +156,26 @@ function Profile({ onBack, onTokenUpdate }) {
               <span style={labelStyle}>Account Status:</span>
               <span style={{ ...valueStyle, color: '#27ae60' }}>Active</span>
             </div>
+          </div>
+        </div>
+
+        {/* Theme Settings */}
+        <div style={themeSettingsStyle}>
+          <h3 style={{ marginBottom: '15px' }}>Appearance</h3>
+          <div style={themeToggleRowStyle}>
+            <span>Dark Mode</span>
+            <button 
+              onClick={toggleDarkMode} 
+              style={{
+                ...themeToggleButtonStyle,
+                backgroundColor: darkMode ? '#4a90d9' : '#ccc'
+              }}
+            >
+              <span style={{
+                ...themeToggleKnobStyle,
+                transform: darkMode ? 'translateX(24px)' : 'translateX(0)'
+              }} />
+            </button>
           </div>
         </div>
 
@@ -386,6 +406,42 @@ const successStyle = {
   textAlign: 'center',
   marginBottom: '15px',
   fontWeight: 'bold'
+}
+
+const themeSettingsStyle = {
+  backgroundColor: 'white',
+  borderRadius: '12px',
+  padding: '20px',
+  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+  marginTop: '20px'
+}
+
+const themeToggleRowStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+}
+
+const themeToggleButtonStyle = {
+  width: '50px',
+  height: '26px',
+  borderRadius: '13px',
+  border: 'none',
+  cursor: 'pointer',
+  position: 'relative',
+  transition: 'background-color 0.3s ease'
+}
+
+const themeToggleKnobStyle = {
+  width: '22px',
+  height: '22px',
+  borderRadius: '50%',
+  backgroundColor: 'white',
+  position: 'absolute',
+  top: '2px',
+  left: '2px',
+  transition: 'transform 0.3s ease',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
 }
 
 const loadingStyle = {
