@@ -97,15 +97,42 @@ Each user can only access and manage **their own contacts**, ensuring data priva
 
 1. **Clone the repository** and navigate into the project folder.
 
-2. **Install dependencies** using `npm install`.
+```bash
+cd backend
+```
 
-3. **Create a `.env` file** in the root directory (see [Environment Variables](#environment-variables)).
+2. **Install dependencies**.
 
-4. **Start the development server** using `npm run dev`.
+```bash
+npm install
+```
 
-5. **For production** use `npm start`.
+3. **Create a `.env` file** in the backend directory (see [Environment Variables](#environment-variables)).
 
-The server will start on the port specified in your `.env` file (default: 5000).
+4. **Start the development server** (with auto-reload).
+
+```bash
+npm run dev
+```
+
+5. **For production** use:
+
+```bash
+npm start
+```
+
+### Running with Frontend (Recommended)
+
+From the root project folder, you can start both backend and frontend together.
+
+```bash
+cd ..
+npm start
+```
+
+This uses concurrently to run both servers simultaneously.
+
+The server will start on the port specified in your `.env` file (default: 5001).
 
 ---
 

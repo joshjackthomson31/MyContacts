@@ -128,19 +128,54 @@ The backend API must be running on port 5001 for the frontend to communicate wit
 
 First, navigate to the project directory in your terminal.
 
+```bash
+cd frontend
+```
+
 Run npm install to install all dependencies. This will download React, Vite, Axios, and other required packages.
+
+```bash
+npm install
+```
 
 ### Running the Application
 
-Run npm run dev to start the development server. The application will be available at http://localhost:5173 or the next available port.
+Start the development server.
+
+```bash
+npm run dev
+```
+
+The application will be available at http://localhost:5173 or the next available port.
 
 The development server supports hot module replacement, meaning changes you make to the code will appear instantly in the browser without a full page refresh.
 
+### Running with Backend (Recommended)
+
+From the root project folder, you can start both frontend and backend together.
+
+```bash
+cd ..
+npm start
+```
+
+This uses concurrently to run both servers simultaneously.
+
 ### Building for Production
 
-Run npm run build to create a production build. This creates an optimized bundle in the dist folder.
+Create a production build.
 
-Run npm run preview to preview the production build locally.
+```bash
+npm run build
+```
+
+This creates an optimized bundle in the dist folder.
+
+Preview the production build locally.
+
+```bash
+npm run preview
+```
 
 ---
 

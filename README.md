@@ -41,7 +41,8 @@ MongoDB Atlas account or local MongoDB instance is required for the database.
 Clone the repository and install all dependencies.
 
 ```bash
-cd mycontacts-app
+git clone https://github.com/joshjackthomson31/MyContacts.git
+cd MyContacts
 npm install
 npm run install:all
 ```
