@@ -94,6 +94,8 @@ The EditContactModal.jsx file contains a modal popup component for editing exist
 
 The ContactDetailModal.jsx file contains a modal popup component for viewing detailed information about a single contact. It fetches fresh data from the API using the getOne function and displays the contact ID, creation date, and last updated date.
 
+The ConfirmDialog.jsx file contains a reusable confirmation dialog component. It displays a modal overlay with customizable title, message, and button text. It supports both danger (red) and primary (blue) button styles. Used for confirming destructive actions like delete and logout.
+
 ### Pages Directory
 
 The src/pages folder contains full-page components.
@@ -105,6 +107,8 @@ The Register.jsx file contains the registration page with username, email, passw
 The Contacts.jsx file contains the main contacts page. It displays all contacts, handles adding, editing, and deleting contacts, and fetches data from the API on mount.
 
 The Profile.jsx file contains the user profile page. It displays the current user's information including username, email, and user ID.
+
+The Trash.jsx file contains the trash page for managing deleted contacts. Users can restore contacts or permanently delete them. It includes an Empty Trash button to delete all trashed contacts at once.
 
 ### Services Directory
 
@@ -203,7 +207,11 @@ Users can add new contacts using the contact form.
 
 Users can edit existing contacts by clicking the Edit button, which opens a modal with pre-filled data.
 
-Users can delete contacts by clicking the Delete button.
+Users can delete contacts by clicking the Delete button. This moves the contact to Trash (soft delete).
+
+Users can access Trash to view deleted contacts, restore them, or permanently delete them.
+
+Confirmation dialogs appear before destructive actions like delete, logout, and empty trash.
 
 All contact operations are persisted to the backend database.
 
@@ -231,7 +239,11 @@ The register page allows new users to create an account. It contains four input 
 
 ### Contacts Page
 
-The contacts page is the main view after login. It displays a header with the app name, a welcome message with the username, a Profile button, and a Logout button. Below the header is the add contact form followed by a list of all contacts. Each contact is rendered as a ContactCard component with View, Edit, and Delete buttons.
+The contacts page is the main view after login. It displays a header with the app name, a welcome message with the username, a Trash button, a Profile button, and a Logout button. Below the header is the add contact form followed by search and sort controls, then a list of all contacts. Each contact is rendered as a ContactCard component with a favorite star, View, Edit, and Delete buttons. Favorites are displayed first in the list.
+
+### Trash Page
+
+The trash page displays all deleted contacts. Each contact shows the name, email, phone, and deletion date. Users can restore contacts to bring them back to the main list, or permanently delete them. An Empty Trash button allows deleting all trashed contacts at once. All destructive actions show confirmation dialogs.
 
 ### Profile Page
 
@@ -287,7 +299,15 @@ The contactsAPI.create function sends a POST request to /contacts with name, ema
 
 The contactsAPI.update function sends a PUT request to /contacts/:id with updated contact data.
 
-The contactsAPI.delete function sends a DELETE request to /contacts/:id to remove a contact.
+The contactsAPI.delete function sends a DELETE request to /contacts/:id to soft delete a contact (moves to trash).
+
+The contactsAPI.getTrash function sends a GET request to /contacts/trash to retrieve all deleted contacts.
+
+The contactsAPI.restore function sends a PUT request to /contacts/:id/restore to restore a contact from trash.
+
+The contactsAPI.permanentDelete function sends a DELETE request to /contacts/:id/permanent to permanently delete a contact.
+
+The contactsAPI.toggleFavorite function sends a PUT request to /contacts/:id/favorite to toggle the favorite status.
 
 ---
 

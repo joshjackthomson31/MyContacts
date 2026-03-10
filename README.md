@@ -107,11 +107,17 @@ Create, read, update, and delete contacts.
 
 View detailed contact information.
 
+Soft delete with Trash - deleted contacts can be restored or permanently deleted.
+
 User profile page with account management.
 
 Update email address with password verification.
 
 Change password functionality.
+
+Confirmation dialogs for destructive actions (delete, logout, empty trash).
+
+Dark mode support with persistent preference.
 
 Responsive design.
 
@@ -133,7 +139,9 @@ PUT /api/users/password - Change password (requires auth).
 
 ### Contacts
 
-GET /api/contacts - Get all contacts for logged-in user.
+GET /api/contacts - Get all contacts for logged-in user (with optional search & sort).
+
+GET /api/contacts/trash - Get all deleted contacts.
 
 GET /api/contacts/:id - Get a single contact.
 
@@ -141,7 +149,13 @@ POST /api/contacts - Create a new contact.
 
 PUT /api/contacts/:id - Update a contact.
 
-DELETE /api/contacts/:id - Delete a contact.
+PUT /api/contacts/:id/favorite - Toggle favorite status.
+
+PUT /api/contacts/:id/restore - Restore a contact from trash.
+
+DELETE /api/contacts/:id - Soft delete (move to trash).
+
+DELETE /api/contacts/:id/permanent - Permanently delete a contact.
 
 ---
 
