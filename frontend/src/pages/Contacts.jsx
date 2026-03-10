@@ -4,6 +4,7 @@ import ContactCard from '../components/ContactCard'
 import ContactForm from '../components/ContactForm'
 import EditContactModal from '../components/EditContactModal'
 import ContactDetailModal from '../components/ContactDetailModal'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 // Contacts.jsx - Main contacts page (after login)
 //
@@ -35,6 +36,10 @@ function Contacts({ onLogout, onViewProfile, onViewTrash }) {
   // Search and sort state
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('date') // 'date', 'date-asc', 'name', 'name-desc'
+
+  // Confirmation dialog state
+  const [deleteContactId, setDeleteContactId] = useState(null)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   // Fetch contacts with search and sort
   const fetchContacts = async (search = '', sort = 'date') => {
@@ -89,14 +94,21 @@ function Contacts({ onLogout, onViewProfile, onViewTrash }) {
     }
   }
 
+  // Show delete confirmation dialog
+  const handleDeleteClick = (id) => {
+    setDeleteContactId(id)
+  }
+
   // Delete contact (soft delete - moves to trash)
-  const handleDelete = async (id) => {
+  const handleDeleteConfirm = async () => {
     try {
-      await contactsAPI.delete(id)
+      await contactsAPI.delete(deleteContactId)
       // Remove from state
-      setContacts(contacts.filter(c => c._id !== id))
+      setContacts(contacts.filter(c => c._id !== deleteContactId))
+      setDeleteContactId(null)
     } catch (err) {
       alert('Failed to delete contact')
+      setDeleteContactId(null)
     }
   }
 
@@ -138,8 +150,13 @@ function Contacts({ onLogout, onViewProfile, onViewTrash }) {
     }
   }
 
-  // Handle logout
-  const handleLogout = () => {
+  // Show logout confirmation dialog
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true)
+  }
+
+  // Handle logout confirmation
+  const handleLogoutConfirm = () => {
     // Remove token from localStorage
     localStorage.removeItem('token')
     // Call parent function to switch view
@@ -178,7 +195,7 @@ function Contacts({ onLogout, onViewProfile, onViewTrash }) {
           <button onClick={onViewProfile} style={profileButtonStyle}>
             Profile
           </button>
-          <button onClick={handleLogout} style={logoutButtonStyle}>
+          <button onClick={handleLogoutClick} style={logoutButtonStyle}>
             Logout
           </button>
         </div>
@@ -224,7 +241,7 @@ function Contacts({ onLogout, onViewProfile, onViewTrash }) {
             isFavorite={contact.isFavorite}
             onView={() => handleView(contact._id)}
             onEdit={() => handleEdit(contact)}
-            onDelete={() => handleDelete(contact._id)}
+            onDelete={() => handleDeleteClick(contact._id)}
             onToggleFavorite={() => handleToggleFavorite(contact._id)}
           />
         ))}
@@ -252,6 +269,30 @@ function Contacts({ onLogout, onViewProfile, onViewTrash }) {
           onClose={() => setViewingContactId(null)}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteContactId !== null}
+        title="Move to Trash?"
+        message="This contact will be moved to trash. You can restore it later from the Trash page."
+        confirmText="Move to Trash"
+        cancelText="Cancel"
+        confirmStyle="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteContactId(null)}
+      />
+
+      {/* Logout Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Logout?"
+        message="Are you sure you want to logout?"
+        confirmText="Logout"
+        cancelText="Cancel"
+        confirmStyle="primary"
+        onConfirm={handleLogoutConfirm}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { contactsAPI } from '../services/api'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 // Trash.jsx - View and manage deleted contacts
 // Contacts moved to trash can be restored or permanently deleted
@@ -8,6 +9,10 @@ function Trash({ onBack }) {
   const [trashedContacts, setTrashedContacts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  // Confirmation dialog state
+  const [deleteContactId, setDeleteContactId] = useState(null)
+  const [showEmptyTrashConfirm, setShowEmptyTrashConfirm] = useState(false)
 
   // Fetch trashed contacts on mount
   useEffect(() => {
@@ -37,33 +42,39 @@ function Trash({ onBack }) {
     }
   }
 
+  // Show permanent delete confirmation
+  const handlePermanentDeleteClick = (id) => {
+    setDeleteContactId(id)
+  }
+
   // Permanently delete a contact
-  const handlePermanentDelete = async (id) => {
-    if (!confirm('Are you sure you want to permanently delete this contact? This action cannot be undone.')) {
-      return
-    }
-    
+  const handlePermanentDeleteConfirm = async () => {
     try {
-      await contactsAPI.permanentDelete(id)
+      await contactsAPI.permanentDelete(deleteContactId)
       // Remove from trash list
-      setTrashedContacts(trashedContacts.filter(c => c._id !== id))
+      setTrashedContacts(trashedContacts.filter(c => c._id !== deleteContactId))
+      setDeleteContactId(null)
     } catch (err) {
       alert('Failed to delete contact')
+      setDeleteContactId(null)
     }
   }
 
-  // Empty all trash
-  const handleEmptyTrash = async () => {
-    if (!confirm('Are you sure you want to permanently delete ALL contacts in trash? This action cannot be undone.')) {
-      return
-    }
+  // Show empty trash confirmation
+  const handleEmptyTrashClick = () => {
+    setShowEmptyTrashConfirm(true)
+  }
 
+  // Empty all trash
+  const handleEmptyTrashConfirm = async () => {
     try {
       // Delete all trashed contacts
       await Promise.all(trashedContacts.map(c => contactsAPI.permanentDelete(c._id)))
       setTrashedContacts([])
+      setShowEmptyTrashConfirm(false)
     } catch (err) {
       alert('Failed to empty trash')
+      setShowEmptyTrashConfirm(false)
     }
   }
 
@@ -81,7 +92,7 @@ function Trash({ onBack }) {
         <h1>Trash</h1>
         <div style={{ display: 'flex', gap: '10px' }}>
           {trashedContacts.length > 0 && (
-            <button onClick={handleEmptyTrash} style={emptyTrashButtonStyle}>
+            <button onClick={handleEmptyTrashClick} style={emptyTrashButtonStyle}>
               Empty Trash
             </button>
           )}
@@ -121,7 +132,7 @@ function Trash({ onBack }) {
                     Restore
                   </button>
                   <button 
-                    onClick={() => handlePermanentDelete(contact._id)} 
+                    onClick={() => handlePermanentDeleteClick(contact._id)} 
                     style={deleteButtonStyle}
                   >
                     Delete Forever
@@ -132,6 +143,30 @@ function Trash({ onBack }) {
           </>
         )}
       </main>
+
+      {/* Permanent Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteContactId !== null}
+        title="Delete Forever?"
+        message="This contact will be permanently deleted. This action cannot be undone."
+        confirmText="Delete Forever"
+        cancelText="Cancel"
+        confirmStyle="danger"
+        onConfirm={handlePermanentDeleteConfirm}
+        onCancel={() => setDeleteContactId(null)}
+      />
+
+      {/* Empty Trash Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showEmptyTrashConfirm}
+        title="Empty Trash?"
+        message={`This will permanently delete all ${trashedContacts.length} contact(s) in trash. This action cannot be undone.`}
+        confirmText="Empty Trash"
+        cancelText="Cancel"
+        confirmStyle="danger"
+        onConfirm={handleEmptyTrashConfirm}
+        onCancel={() => setShowEmptyTrashConfirm(false)}
+      />
     </div>
   )
 }
